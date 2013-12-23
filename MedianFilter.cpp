@@ -80,7 +80,7 @@ int MedianFilter::in(int value)
 				dataMoved = true; 
 			}
 			else{
-				i=0; // abort loop if neighbour is larger
+				break; //i=0; // abort loop if left neighbour is larger
 			}
 		}
 	} // end shift data to left
@@ -102,7 +102,7 @@ int MedianFilter::in(int value)
 				locationMap[i] = tempMap;
 			}
 			else{
-				i=medFilterWin; // abort loop if neighbour is smaller
+				break; //i=medFilterWin; // abort loop if right neighbour is smaller
 			}
 		}
 	} // end shift data to right
