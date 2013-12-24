@@ -34,7 +34,7 @@
 #include "MedianFilter.h"
 
 	
-MedianFilter::MedianFilter(byte size)
+MedianFilter::MedianFilter(byte size, int seed)
 {
 
 	if(size < 3){size = 3;}  //  prevent undersized windows
@@ -50,7 +50,7 @@ MedianFilter::MedianFilter(byte size)
 	for(byte i=0; i<medFilterWin; i++){ // initialize the arrays
 		historyMap[i] = i;				// start map with straight run
 		locationMap[i] = i;				// start map with straight run
-		sortedData[i] = 0;				// populate with zeros
+		sortedData[i] = seed;			// populate with seed value
 	}
 	
 }
@@ -80,7 +80,7 @@ int MedianFilter::in(int value)
 				dataMoved = true; 
 			}
 			else{
-				break; //i=0; // abort loop if left neighbour is larger
+				i=0; // abort loop if left neighbour is larger (faster than "break;")
 			}
 		}
 	} // end shift data to left
@@ -102,7 +102,7 @@ int MedianFilter::in(int value)
 				locationMap[i] = tempMap;
 			}
 			else{
-				break; //i=medFilterWin; // abort loop if right neighbour is smaller
+				i=medFilterWin; // abort loop if right neighbour is smaller (faster than "break;")
 			}
 		}
 	} // end shift data to right
