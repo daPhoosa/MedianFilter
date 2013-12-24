@@ -37,7 +37,7 @@
 class MedianFilter
 {
 public:
-	MedianFilter(byte size);
+	MedianFilter(byte size, int seed);
 	int in(int value);
 	int out(); 
 	//void printData();		// used for debugging
