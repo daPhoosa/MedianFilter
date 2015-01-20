@@ -34,11 +34,12 @@
 #include "MedianFilter.h"
 
 	
+
 MedianFilter::MedianFilter(byte size, int seed)
 {
 
 	if(size < 3){size = 3;}  //  prevent undersized windows
-	if(size > 255){size = 255;}  //  prevent oversized windows
+	//if(size > 255){size = 255;}  //  prevent oversized windows
 	
 	medFilterWin = size;				// number of samples in sliding median filter window - usually odd #
 	medDataPointer = size >> 1;			// mid point of window
@@ -107,8 +108,7 @@ int MedianFilter::in(int value)
 		}
 	} // end shift data to right
 	
-	ODP++;
-	if(ODP >= medFilterWin){ODP = 0;} // reset after oldest data point to ring history
+	ODP = (ODP + 1) % medFilterWin; // increment and wrap
 	
 	return sortedData[medDataPointer];
 }
@@ -119,7 +119,7 @@ int MedianFilter::out() // return the value of the median data sample
 	return  sortedData[medDataPointer];     
 }
 
-/*
+
 void MedianFilter::printData() // display sorting data for debugging
 {
 	for(int i=0; i<medFilterWin; i++){
@@ -144,5 +144,5 @@ void MedianFilter::printData() // display sorting data for debugging
 	Serial.println("Location of age data in age list sorted by data size");
 	Serial.println("");
 }  
-*/
+
 
