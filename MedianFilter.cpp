@@ -39,7 +39,6 @@ MedianFilter::MedianFilter(byte size, int seed)
 {
 
 	if(size < 3){size = 3;}  //  prevent undersized windows
-	//if(size > 255){size = 255;}  //  prevent oversized windows
 	
 	medFilterWin = size;				// number of samples in sliding median filter window - usually odd #
 	medDataPointer = size >> 1;			// mid point of window
@@ -48,7 +47,8 @@ MedianFilter::MedianFilter(byte size, int seed)
 	locationMap = (byte*) calloc (size, sizeof(byte));	// array for locations of history data in map list
 	ODP = 0;							// oldest data point location in historyMap
 	
-	for(byte i=0; i<medFilterWin; i++){ // initialize the arrays
+	for(byte i=0; i<medFilterWin; i++) // initialize the arrays
+	{
 		historyMap[i] = i;				// start map with straight run
 		locationMap[i] = i;				// start map with straight run
 		sortedData[i] = seed;			// populate with seed value
@@ -62,10 +62,13 @@ int MedianFilter::in(int value)
 
 	dataMoved = false;
 	
-	if(historyMap[ODP] != 0){ // don't check left neighbours if at the extreme left
-		for(int i=historyMap[ODP]; i>0; i--){	//index through left adjacent data
+	if(historyMap[ODP] != 0) // don't check left neighbours if at the extreme left
+	{
+		for(int i=historyMap[ODP]; i>0; i--)	//index through left adjacent data
+		{
 			int j = i - 1;	// neighbour location
-			if(sortedData[i] < sortedData[j]){
+			if(sortedData[i] < sortedData[j])
+			{
 				//Serial.print("<");
 				tempData = sortedData[j];		// store neighbour data in temp
 				tempMap = locationMap[j];		// store position of adjacent data in historyMap
@@ -80,16 +83,20 @@ int MedianFilter::in(int value)
 				
 				dataMoved = true; 
 			}
-			else{
+			else
+			{
 				i=0; // abort loop if left neighbour is larger (faster than "break;")
 			}
 		}
 	} // end shift data to left
 
-	if(historyMap[ODP] != medFilterWin - 1 && dataMoved == false){ // don't check right neighbours if at the extreme right or data already moved
-		for(int i=historyMap[ODP]; i<medFilterWin-1; i++){ //index through right adjacent data
+	if(historyMap[ODP] != medFilterWin - 1 && dataMoved == false) // don't check right neighbours if at the extreme right or data already moved
+	{
+		for(int i=historyMap[ODP]; i<medFilterWin-1; i++) //index through right adjacent data
+		{
 			int j = i + 1;	// neighbour location
-			if(sortedData[i] > sortedData[j]){
+			if(sortedData[i] > sortedData[j])
+			{
 				//Serial.print(">");
 				tempData = sortedData[j]; // store neighbour data in temp
 				tempMap = locationMap[j];	// store position of adjacent data in historyMap
@@ -102,7 +109,8 @@ int MedianFilter::in(int value)
 				historyMap[tempMap] = i;
 				locationMap[i] = tempMap;
 			}
-			else{
+			else
+			{
 				i=medFilterWin; // abort loop if right neighbour is smaller (faster than "break;")
 			}
 		}
@@ -122,21 +130,24 @@ int MedianFilter::out() // return the value of the median data sample
 
 void MedianFilter::printData() // display sorting data for debugging
 {
-	for(int i=0; i<medFilterWin; i++){
+	for(int i=0; i<medFilterWin; i++)
+	{
 		Serial.print(sortedData[i]);
 		Serial.print("\t");
 	}
 	Serial.print("\t");
 	Serial.println("Data sorted by size");
 	
-	for(int i=0; i<medFilterWin; i++){
+	for(int i=0; i<medFilterWin; i++)
+	{
 		Serial.print(historyMap[i]);
 		Serial.print("\t");
 	}
 	Serial.print("\t");
 	Serial.println("Locations of data sorted by age");
 	
-	for(int i=0; i<medFilterWin; i++){
+	for(int i=0; i<medFilterWin; i++)
+	{
 		Serial.print(locationMap[i]);
 		Serial.print("\t");
 	}
