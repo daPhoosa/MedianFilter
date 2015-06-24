@@ -7,6 +7,7 @@ Written by Phillip Schmidt
 
 
 LIMITATIONS:
+----------------------
 
 1) Minimum window size is 3
 
