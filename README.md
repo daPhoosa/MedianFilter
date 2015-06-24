@@ -17,6 +17,7 @@ LIMITATIONS:
 
 
 USAGE:
+----------
 
 Object Creation:
   MedianFilter filterObject(size, seed); 
@@ -32,6 +33,7 @@ Read Current Value:
     (this allows for reading the current median value without submitting a new sample)
   
 OPERATION OVERVIEW
+-------------------
 
   This median filter attempts to minimize processing time by maintaining a data list that is sorted from smallest value to largest value.  When a new sample is submitted, it replaces the oldest sample.  The new sample is then shifted in the sorted list to bring it to the correct location.  Map arrays are used to track the age and location of each sample.
   
