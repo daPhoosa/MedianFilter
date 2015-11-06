@@ -58,13 +58,15 @@ MedianFilter::MedianFilter(byte size, int seed)
 
 int MedianFilter::in(int value)
 {  
-	sortedData[historyMap[ODP]] = value;  // store new data in location of oldest data
 
-	dataMoved = false;
+	boolean dataMoved = false;
+	byte rightEdge = medFilterWin - 1;
+	
+	sortedData[historyMap[ODP]] = value;  // store new data in location of oldest data
 	
 	if(historyMap[ODP] != 0) // don't check left neighbours if at the extreme left
 	{
-		for(int i=historyMap[ODP]; i>0; i--)	//index through left adjacent data
+		for(int i = historyMap[ODP]; i > 0; i--)	//index through left adjacent data
 		{
 			int j = i - 1;	// neighbour location
 			if(sortedData[i] < sortedData[j])
@@ -89,10 +91,10 @@ int MedianFilter::in(int value)
 			}
 		}
 	} // end shift data to left
-
-	if(historyMap[ODP] != medFilterWin - 1 && dataMoved == false) // don't check right neighbours if at the extreme right or data already moved
+	
+	if(historyMap[ODP] != rightEdge && dataMoved == false) // don't check right neighbours if at the extreme right or data already moved
 	{
-		for(int i=historyMap[ODP]; i<medFilterWin-1; i++) //index through right adjacent data
+		for(int i = historyMap[ODP]; i < rightEdge; i++) //index through right adjacent data
 		{
 			int j = i + 1;	// neighbour location
 			if(sortedData[i] > sortedData[j])
@@ -116,7 +118,8 @@ int MedianFilter::in(int value)
 		}
 	} // end shift data to right
 	
-	ODP = (ODP + 1) % medFilterWin; // increment and wrap
+	ODP++; 		// increment and wrap
+	if(ODP >= medFilterWin) ODP = 0;
 	
 	return sortedData[medDataPointer];
 }
@@ -127,7 +130,7 @@ int MedianFilter::out() // return the value of the median data sample
 	return  sortedData[medDataPointer];     
 }
 
-
+/*
 void MedianFilter::printData() // display sorting data for debugging
 {
 	for(int i=0; i<medFilterWin; i++)
@@ -155,5 +158,5 @@ void MedianFilter::printData() // display sorting data for debugging
 	Serial.println("Location of age data in age list sorted by data size");
 	Serial.println("");
 }  
-
+*/
 
