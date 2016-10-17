@@ -1,7 +1,7 @@
 //#include <Arduino.h>
 #include <MedianFilter.h>
 
-MedianFilter test(31);
+MedianFilter test(31, 0);
 
 int i=0;
 int j;
@@ -16,11 +16,12 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly: 
   i = int(random(-9, 9));
-  test.write(i);
-  j = test.read();
+  test.in(i);
+  j = test.out();
   
-  Serial.println(i);
-  test.printData();
+  Serial.print(i);
+  Serial.print("\t");
+  Serial.println(j);
 
   //i++;
 
