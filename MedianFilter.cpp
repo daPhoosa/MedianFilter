@@ -40,22 +40,22 @@
 #include "MedianFilter.h"
 
 
-
 MedianFilter::MedianFilter(const byte size, const int seed)
 {
 
-   medFilterWin = max(size, 3);			// number of samples in sliding median filter window - usually odd #
-   medDataPointer = size >> 1;				// mid point of window
-   data        = (int*)  calloc (size, sizeof(int));	 // array for data
-   sizeMap     = (byte*) calloc (size, sizeof(byte));  // array for locations of data in sorted list
-   locationMap = (byte*) calloc (size, sizeof(byte));	 // array for locations of history data in map list
-   oldestDataPoint = medDataPointer;					// oldest data point location in data array
+   medFilterWin    = max(size, 3);        // number of samples in sliding median filter window - usually odd #
+   medDataPointer  = size >> 1;           // mid point of window
+   data            = (int*)  calloc (size, sizeof(int));    // array for data
+   sizeMap         = (byte*) calloc (size, sizeof(byte)); // array for locations of data in sorted list
+   locationMap     = (byte*) calloc (size, sizeof(byte)); // array for locations of history data in map list
+   oldestDataPoint = medDataPointer;      // oldest data point location in data array
+   totalSum        = size * seed;         // total of all values
 
    for(byte i = 0; i < medFilterWin; i++) // initialize the arrays
    {
-      sizeMap[i] = i;			// start map with straight run
-      locationMap[i] = i;		// start map with straight run
-      data[i] = seed;			// populate with seed value
+      sizeMap[i]     = i;      // start map with straight run
+      locationMap[i] = i;      // start map with straight run
+      data[i]        = seed;   // populate with seed value     
    }
 
 }
@@ -69,18 +69,20 @@ int MedianFilter::in(int value)
    boolean dataMoved = false;
    const byte rightEdge = medFilterWin - 1;  // adjusted for zero indexed array
 
+   totalSum += value - data[oldestDataPoint];  // add new value and remove oldest value  
+
    data[oldestDataPoint] = value;  // store new data in location of oldest data in ring buffer
 
    // SORT LEFT (-) <======(n) (+)
    if(locationMap[oldestDataPoint] > 0) // don't check left neighbours if at the extreme left
    {
-      for(byte i = locationMap[oldestDataPoint]; i > 0; i--)	//index through left adjacent data
+      for(byte i = locationMap[oldestDataPoint]; i > 0; i--)   //index through left adjacent data
       {
-         byte n = i - 1;	// neighbour location
+         byte n = i - 1;   // neighbour location
 
          if(data[oldestDataPoint] < data[sizeMap[n]]) // find insertion point, move old data into position
          {
-            sizeMap[i] = sizeMap[n];	// move existing data right so the new data can go left
+            sizeMap[i] = sizeMap[n];   // move existing data right so the new data can go left
             locationMap[sizeMap[n]]++;
 
             sizeMap[n] = oldestDataPoint; // assign new data to neighbor position
@@ -98,13 +100,13 @@ int MedianFilter::in(int value)
    // SORT RIGHT (-) (n)======> (+)
    if(!dataMoved && locationMap[oldestDataPoint] < rightEdge) // don't check right if at right border, or the data has already moved
    {
-      for(int i = locationMap[oldestDataPoint]; i < rightEdge; i++)	//index through left adjacent data
+      for(int i = locationMap[oldestDataPoint]; i < rightEdge; i++)   //index through left adjacent data
       {
-         int n = i + 1;	// neighbour location
+         int n = i + 1;   // neighbour location
 
          if(data[oldestDataPoint] > data[sizeMap[n]]) // find insertion point, move old data into position
          {
-            sizeMap[i] = sizeMap[n];	// move existing data left so the new data can go right
+            sizeMap[i] = sizeMap[n];   // move existing data left so the new data can go right
             locationMap[sizeMap[n]]--;
 
             sizeMap[n] = oldestDataPoint; // assign new data to neighbor position
@@ -116,7 +118,7 @@ int MedianFilter::in(int value)
          }
       }
    }
-   oldestDataPoint++; 		// increment and wrap
+   oldestDataPoint++;       // increment and wrap
    if(oldestDataPoint == medFilterWin) oldestDataPoint = 0;
 
    return data[sizeMap[medDataPointer]];
@@ -140,6 +142,20 @@ int MedianFilter::getMax()
    return data[sizeMap[ medFilterWin - 1 ]];
 }
 
+
+int MedianFilter::getStDev()  // Arduino run time [us]: filterSize * 2 + 131
+{
+   int32_t diffSquareSum = 0;
+   int mean = totalSum / medFilterWin;
+
+   for( int i = 0; i < medFilterWin; i++ )
+   {
+      int diff = data[i] - mean;
+      diffSquareSum += diff * diff;
+   }
+
+   return int( sqrtf( float(diffSquareSum) / float(medFilterWin - 1) ) + 0.5f );
+}
 
 
 // *** debug fuctions ***

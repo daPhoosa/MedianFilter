@@ -44,6 +44,7 @@
 
          int getMin();
          int getMax();
+         int getStDev();
 
          /*
          void printData();		// used for debugging
@@ -59,6 +60,7 @@
          byte * sizeMap;			// array pointer for locations data in sorted by size
          byte * locationMap;		// array pointer for data locations in history map
          byte oldestDataPoint;	// oldest data point location in ring buffer
+         int32_t totalSum;
    };
 
 #endif
