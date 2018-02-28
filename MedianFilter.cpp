@@ -42,7 +42,6 @@
 
 MedianFilter::MedianFilter(const byte size, const int seed)
 {
-
    medFilterWin    = max(size, 3);        // number of samples in sliding median filter window - usually odd #
    medDataPointer  = size >> 1;           // mid point of window
    data            = (int*)  calloc (size, sizeof(int));    // array for data
@@ -57,8 +56,8 @@ MedianFilter::MedianFilter(const byte size, const int seed)
       locationMap[i] = i;      // start map with straight run
       data[i]        = seed;   // populate with seed value     
    }
-
 }
+
 
 int MedianFilter::in(int value)
 {
