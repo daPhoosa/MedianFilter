@@ -40,44 +40,44 @@
 #include "MedianFilter.h"
 
 
-MedianFilter::MedianFilter(const byte size, const int seed)
+MedianFilter::MedianFilter(int size, int seed)
 {
-   medFilterWin    = max(size, 3);        // number of samples in sliding median filter window - usually odd #
+   medFilterWin    = constrain(size, 3, 255); // number of samples in sliding median filter window - usually odd #
    medDataPointer  = size >> 1;           // mid point of window
-   data            = (int*)  calloc (size, sizeof(int));    // array for data
-   sizeMap         = (byte*) calloc (size, sizeof(byte)); // array for locations of data in sorted list
-   locationMap     = (byte*) calloc (size, sizeof(byte)); // array for locations of history data in map list
+   data            = (int*)     calloc (size, sizeof(int));     // array for data
+   sizeMap         = (uint8_t*) calloc (size, sizeof(uint8_t)); // array for locations of data in sorted list
+   locationMap     = (uint8_t*) calloc (size, sizeof(uint8_t)); // array for locations of history data in map list
    oldestDataPoint = medDataPointer;      // oldest data point location in data array
    totalSum        = size * seed;         // total of all values
 
-   for(byte i = 0; i < medFilterWin; i++) // initialize the arrays
+   for(uint8_t i = 0; i < medFilterWin; i++) // initialize the arrays
    {
       sizeMap[i]     = i;      // start map with straight run
       locationMap[i] = i;      // start map with straight run
-      data[i]        = seed;   // populate with seed value     
+      data[i]        = seed;   // populate with seed value
    }
 }
 
 
-int MedianFilter::in(int value)
+int MedianFilter::in(const int & value)
 {
    // sort sizeMap
    // small vaues on the left (-)
    // larger values on the right (+)
 
    boolean dataMoved = false;
-   const byte rightEdge = medFilterWin - 1;  // adjusted for zero indexed array
+   const uint8_t rightEdge = medFilterWin - 1;  // adjusted for zero indexed array
 
-   totalSum += value - data[oldestDataPoint];  // add new value and remove oldest value  
+   totalSum += value - data[oldestDataPoint];  // add new value and remove oldest value
 
    data[oldestDataPoint] = value;  // store new data in location of oldest data in ring buffer
 
    // SORT LEFT (-) <======(n) (+)
    if(locationMap[oldestDataPoint] > 0) // don't check left neighbours if at the extreme left
    {
-      for(byte i = locationMap[oldestDataPoint]; i > 0; i--)   //index through left adjacent data
+      for(uint8_t i = locationMap[oldestDataPoint]; i > 0; i--)   //index through left adjacent data
       {
-         byte n = i - 1;   // neighbour location
+         uint8_t n = i - 1;   // neighbour location
 
          if(data[oldestDataPoint] < data[sizeMap[n]]) // find insertion point, move old data into position
          {
@@ -89,7 +89,7 @@ int MedianFilter::in(int value)
 
             dataMoved = true;
          }
-         else 
+         else
          {
             break; // stop checking once a smaller value is found on the left
          }
@@ -111,7 +111,7 @@ int MedianFilter::in(int value)
             sizeMap[n] = oldestDataPoint; // assign new data to neighbor position
             locationMap[oldestDataPoint]++;
          }
-         else 
+         else
          {
             break; // stop checking once a smaller value is found on the right
          }

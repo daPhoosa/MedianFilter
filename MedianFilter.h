@@ -38,8 +38,8 @@
    class MedianFilter
    {
       public:
-         MedianFilter(byte size, int seed);
-         int in(int value);
+         MedianFilter(int size, int seed);
+         int in(const int & value);
          int out();
 
          int getMin();
@@ -54,12 +54,12 @@
          */
 
       private:
-         byte medFilterWin;		// number of samples in sliding median filter window - usually odd #
-         byte medDataPointer;	// mid point of window
-         int  * data;			// array pointer for data sorted by age in ring buffer
-         byte * sizeMap;			// array pointer for locations data in sorted by size
-         byte * locationMap;		// array pointer for data locations in history map
-         byte oldestDataPoint;	// oldest data point location in ring buffer
+         uint8_t medFilterWin;      // number of samples in sliding median filter window - usually odd #
+         uint8_t medDataPointer;	   // mid point of window
+         int     * data;			   // array pointer for data sorted by age in ring buffer
+         uint8_t * sizeMap;			// array pointer for locations data in sorted by size
+         uint8_t * locationMap;		// array pointer for data locations in history map
+         uint8_t oldestDataPoint;	// oldest data point location in ring buffer
          int32_t totalSum;
    };
 
