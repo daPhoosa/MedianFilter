@@ -44,6 +44,7 @@
 
          int getMin();
          int getMax();
+         int getMean();
          int getStDev();
 
          /*

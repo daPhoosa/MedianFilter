@@ -142,10 +142,16 @@ int MedianFilter::getMax()
 }
 
 
+int MedianFilter::getMean()
+{
+   return totalSum / medFilterWin;
+}
+
+
 int MedianFilter::getStDev()  // Arduino run time [us]: filterSize * 2 + 131
 {
    int32_t diffSquareSum = 0;
-   int mean = totalSum / medFilterWin;
+   int mean = getMean();
 
    for( int i = 0; i < medFilterWin; i++ )
    {

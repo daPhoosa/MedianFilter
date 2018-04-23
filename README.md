@@ -1,13 +1,10 @@
-MedianFilter
-============
+# MedianFilter
 
 Simple Median Filter library designed for the Arduino platform.
 
-Written by Phillip Schmidt
 
 
-LIMITATIONS:
-----------------------
+## LIMITATIONS:
 
 1) Minimum window size is 3
 
@@ -16,24 +13,36 @@ LIMITATIONS:
 3) Only accepts arduino data type INT
 
 
-USAGE:
-----------
+## USAGE:
 
-Object Creation:
-  MedianFilter filterObject(size, seed); 
-    (Use the smallest window that provides acceptable results, large windows use more memory and take more time)
-    (Seed allows for initializing the filer to the desired or expected starting value)
+### Object Creation:
+```
+MedianFilter filterObject(size, seed); 
+```
+* Use the smallest window that provides acceptable results, large windows use more memory and take more time
+* Seed allows for initializing the filer to the desired or expected starting value
     
-Input Data:
-  filterObject.in(newValue);
-    (this will return the median value after the new sample has been processed)
+### Input Data:
+```
+filterResult = filterObject.in(newValue);
+```
+* This will return the median value after the new sample has been processed
     
-Read Current Value:
-  filterObject.out();
-    (this allows for reading the current median value without submitting a new sample)
+### Read Current Value:
+```
+filterResult = filterObject.out();
+```
+* this allows for reading the current median value without submitting a new sample
+
+### Other Statistics
+```
+filterObject.getMin();
+filterObject.getMax();
+filterObject.getMean();
+filterObject.getStDev();
+```
   
-OPERATION OVERVIEW
--------------------
+## OPERATION OVERVIEW
 
   This median filter attempts to minimize processing time by maintaining a data list that is sorted from smallest value to largest value.  When a new sample is submitted, it replaces the oldest sample.  The new sample is then shifted in the sorted list to bring it to the correct location.  Map arrays are used to track the age and location of each sample.
   
