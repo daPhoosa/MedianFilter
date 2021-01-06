@@ -39,6 +39,7 @@
    {
       public:
          MedianFilter(int size, int seed);
+         ~MedianFilter();
          int in(const int & value);
          int out();
 
