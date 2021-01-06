@@ -58,6 +58,13 @@ MedianFilter::MedianFilter(int size, int seed)
    }
 }
 
+MedianFilter::~MedianFilter()
+{
+  // Free up the used memory when the object is destroyed
+  free(data);
+  free(sizeMap);
+  free(locationMap);
+}
 
 int MedianFilter::in(const int & value)
 {
